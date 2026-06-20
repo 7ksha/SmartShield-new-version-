@@ -1,0 +1,94 @@
+services:
+
+  # ── Redis (persistent) ───────────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: smartshield-redis
+    restart: always
+    command: redis-server /usr/local/etc/redis/redis.conf
+    volumes:
+      - ../config/redis.conf:/usr/local/etc/redis/redis.conf:ro
+      - redis_data:/data
+    ports:
+      - "127.0.0.1:6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - smartshield_net
+
+  # ── SmartShield IPS ──────────────────────────────────────────────────────
+  smartshield:
+    image: smartshield_gp:latest
+    container_name: smartshield
+    restart: always
+    depends_on:
+      redis:
+        condition: service_healthy
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    environment:
+      - IS_IN_A_DOCKER_CONTAINER=True
+      - SMARTSHIELD_WEB_USER=${SMARTSHIELD_WEB_USER:-admin}
+      - SMARTSHIELD_WEB_PASSWORD=${SMARTSHIELD_WEB_PASSWORD:-SmartShield2024!}
+      - SMARTSHIELD_SECRET_KEY=${SMARTSHIELD_SECRET_KEY:-changeme_generate_a_real_key}
+    volumes:
+      - ../config:/smartshield/config/
+      - ../dataset:/smartshield/dataset/
+      - smartshield_output:/smartshield/output/
+    command: >
+      bash -c "
+        echo '[SmartShield] Starting...' &&
+        python3 smartshield.py
+          -i ${SMARTSHIELD_INTERFACE:-eth0}
+          -c config/smartshield.yaml
+          -o output/
+          --verbose
+      "
+    healthcheck:
+      test: ["CMD-SHELL", "pgrep -f smartshield.py || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    networks:
+      - smartshield_net
+
+  # ── Web Interface ────────────────────────────────────────────────────────
+  webinterface:
+    image: smartshield_gp:latest
+    container_name: smartshield-web
+    restart: always
+    depends_on:
+      redis:
+        condition: service_healthy
+    environment:
+      - IS_IN_A_DOCKER_CONTAINER=True
+      - SMARTSHIELD_WEB_USER=${SMARTSHIELD_WEB_USER:-admin}
+      - SMARTSHIELD_WEB_PASSWORD=${SMARTSHIELD_WEB_PASSWORD:-Demo1234567!}
+      - SMARTSHIELD_SECRET_KEY=${SMARTSHIELD_SECRET_KEY:-changeme_generate_a_real_key}
+      - REDIS_HOST=smartshield-redis
+    ports:
+      - "0.0.0.0:55000:55000"
+    volumes:
+      - ../config:/smartshield/config/:ro
+      - smartshield_output:/smartshield/output/:ro
+    command: >
+      bash -c "cd /smartshield && python3 -m flask --app webinterface/app.py run --host=0.0.0.0 --port=55000"
+    networks:
+      - smartshield_net
+
+volumes:
+  redis_data:
+    name: smartshield_redis_data
+
+  smartshield_output:
+    name: smartshield_output
+
+networks:
+  smartshield_net:
+    name: smartshield_net
+    driver: bridge

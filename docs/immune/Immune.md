@@ -1,0 +1,18 @@
+# smartshield Immune
+
+This is the main guide to the documentation related to the changes done to smartshield as part of incorporating the immunology ideas
+
+
+- [Main Architecture of smartshield Immune](https://stratospherelinuxips.readthedocs.io/en/develop/immune/immune_architecture.html)
+- [Research RPI Limitations](https://stratospherelinuxips.readthedocs.io/en/develop/immune/research_rpi_limitations_and_define_acceptable_performance_benchmarks.html)
+- [smartshield Compatibility In The RPI](https://stratospherelinuxips.readthedocs.io/en/develop/immune/reimplement_smartshield_features_incompatible_with_the_rpi.html)
+- [Installing smartshield On the RPI](https://stratospherelinuxips.readthedocs.io/en/develop/immune/installing_smartshield_in_the_rpi.html)
+- [LLM Research and Selection](https://stratospherelinuxips.readthedocs.io/en/develop/immune/research_and_selection_of_llm_candidates.html)
+- [LLM RPI Performance](https://stratospherelinuxips.readthedocs.io/en/develop/immune/research_rpi_llm_performance.html)
+- [LLM RPI Finetuning Frameworks](https://stratospherelinuxips.readthedocs.io/en/develop/immune/finetuning_frameworks_rpi_5.html)
+- [LLM Summarization Dataset](https://stratospherelinuxips.readthedocs.io/en/develop/immune/summary_dataset.html)
+- [ARP Poisoning](https://stratospherelinuxips.readthedocs.io/en/develop/immune/arp_poisoning.html)
+- [ARP Poisoning Risks](https://stratospherelinuxips.readthedocs.io/en/develop/immune/arp_poisoning_risks.html)
+- [Blocking with smartshield as an Access Point](https://stratospherelinuxips.readthedocs.io/en/develop/immune/blocking_in_smartshield.html)
+- [IDS-in-the-middle Traffic routing](https://stratospherelinuxips.readthedocs.io/en/develop/immune/ids_in_the_middle_traffic_routing.html)
+- [RPI Failover Mechanisms](https://stratospherelinuxips.readthedocs.io/en/develop/immune/failover_mechanisms.html)

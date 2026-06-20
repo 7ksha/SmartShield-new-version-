@@ -1,0 +1,13 @@
+version: '3.7'
+services:
+        smartshield:
+                image: /smartshield_GP:latest
+                container_name: smartshield
+                cap_add:
+                  - NET_ADMIN
+                volumes:
+                  - $PWD/config:/ips/config/
+                  - $PWD/dataset:/ips/dataset/
+                network_mode: "host"
+                entrypoint: ["/bin/bash"]
+               

@@ -1,0 +1,69 @@
+# ============================================================================
+# SmartShield Systemd Service — Factory Bare-Metal Deployment
+# ============================================================================
+# Install to: /etc/systemd/system/smartshield.service
+#
+# Steps:
+#   sudo cp install/smartshield.service /etc/systemd/system/
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable smartshield
+#   sudo systemctl start smartshield
+#   sudo systemctl status smartshield
+# ============================================================================
+
+[Unit]
+Description=SmartShield OT/ICS Intrusion Prevention System
+Documentation=https://github.com/7ksha/Smart-Shield_GP
+After=network-online.target redis.service zeek.service
+Wants=network-online.target
+Requires=redis.service
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/smartshield
+
+# ── Environment ─────────────────────────────────────────────────────────────
+# Edit /etc/smartshield/environment with your actual values
+EnvironmentFile=/etc/smartshield/environment
+
+# ── Main command ─────────────────────────────────────────────────────────────
+# -i   : network interface to monitor (SPAN/TAP port)
+# -c   : config file
+# --blocking : enable iptables blocking (IT-side only; OT IPs are protected)
+ExecStart=/usr/bin/python3 /opt/smartshield/smartshield.py \
+    -i ${SMARTSHIELD_INTERFACE} \
+    -c /etc/smartshield/smartshield.yaml \
+    --blocking
+
+# ── Web interface (started as separate process) ───────────────────────────
+ExecStartPost=/bin/bash -c \
+    'sleep 5 && python3 -m flask --app /opt/smartshield/webinterface/app.py run \
+     --host=0.0.0.0 --port=55000 &'
+
+# ── Restart policy ────────────────────────────────────────────────────────
+Restart=on-failure
+RestartSec=10s
+StartLimitInterval=60s
+StartLimitBurst=5
+
+# ── Logging ──────────────────────────────────────────────────────────────
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=smartshield
+
+# ── Security hardening ───────────────────────────────────────────────────
+# Allow iptables manipulation (needed for blocking module)
+AmbientCapabilities=CAP_NET_ADMIN CAP_NET_RAW
+CapabilityBoundingSet=CAP_NET_ADMIN CAP_NET_RAW
+
+# Prevent privilege escalation
+NoNewPrivileges=no
+
+# Resource limits
+LimitNOFILE=65535
+MemoryMax=2G
+CPUQuota=80%
+
+[Install]
+WantedBy=multi-user.target

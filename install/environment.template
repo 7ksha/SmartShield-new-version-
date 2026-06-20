@@ -1,0 +1,31 @@
+# /etc/smartshield/environment
+# ==============================
+# SmartShield factory environment variables.
+# This file is loaded by the systemd service.
+# NEVER commit this file to git — it contains credentials.
+#
+# Copy this file to /etc/smartshield/environment and chmod 600.
+
+# ── Network interface ────────────────────────────────────────────────────────
+# The interface connected to the SPAN/TAP port at the IT/OT boundary.
+# Examples: eth1, ens4, bond0.1
+# DO NOT use your management interface (e.g. eth0) — that is used for SSH.
+SMARTSHIELD_INTERFACE=eth1
+
+# ── Web interface credentials ────────────────────────────────────────────────
+# Change these before deployment. Minimum 12-character password.
+SMARTSHIELD_WEB_USER=admin
+SMARTSHIELD_WEB_PASSWORD=ChangeMe_Factory2024!
+
+# Generate a secret key with:  python3 -c "import secrets; print(secrets.token_hex(32))"
+SMARTSHIELD_SECRET_KEY=changeme_run_the_command_above
+
+# ── Syslog / SIEM export ─────────────────────────────────────────────────────
+# Set the SIEM/syslog server IP and port if using syslog export.
+SYSLOG_SERVER=192.168.1.100
+SYSLOG_PORT=514
+
+# ── Webhook / HTTP export ─────────────────────────────────────────────────────
+# Optional: webhook URL for JSON alert forwarding (Splunk HEC, Grafana, etc.)
+# WEBHOOK_URL=http://siem-server:8088/services/collector
+# WEBHOOK_TOKEN=your_splunk_hec_token_here

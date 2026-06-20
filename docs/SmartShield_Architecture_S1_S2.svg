@@ -1,0 +1,231 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1480 1220" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#475569"/>
+    </marker>
+    <marker id="arrowS2" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#b45309"/>
+    </marker>
+    <style>
+      .layerband { fill:#f1f5f9; }
+      .layerlbl  { fill:#64748b; font-size:13px; font-weight:700; letter-spacing:1px; }
+      .s1   { fill:#e8eef6; stroke:#5b7aa6; stroke-width:1.5; }
+      .s1h  { fill:#dbe6f3; stroke:#3f6493; stroke-width:2; }
+      .s2   { fill:#fdeccd; stroke:#d98a1f; stroke-width:1.5; }
+      .s2h  { fill:#fbdca0; stroke:#b45309; stroke-width:2; }
+      .store{ fill:#e6f0ec; stroke:#4f8a72; stroke-width:1.5; }
+      .boxt { fill:#1e293b; font-size:14px; font-weight:600; }
+      .boxs { fill:#475569; font-size:11.5px; }
+      .s2t  { fill:#7c2d12; font-size:14px; font-weight:700; }
+      .s2s  { fill:#92400e; font-size:11.5px; }
+      .flow { stroke:#475569; stroke-width:1.6; fill:none; }
+      .flowS2 { stroke:#b45309; stroke-width:1.8; fill:none; }
+      .elbl { fill:#64748b; font-size:11px; font-style:italic; }
+    </style>
+  </defs>
+
+  <!-- Title -->
+  <text x="40" y="44" fill="#0f172a" font-size="28" font-weight="800">SmartShield IPS — System Architecture</text>
+  <text x="40" y="68" fill="#64748b" font-size="15">Behavioral ML-based OT/ICS Intrusion Prevention System · built on Stratosphere Linux IPS (SLIPS), GPL-2.0</text>
+
+  <!-- Legend -->
+  <g transform="translate(1090,22)">
+    <rect x="0" y="0" width="360" height="64" rx="8" fill="#ffffff" stroke="#cbd5e1"/>
+    <rect x="14" y="14" width="22" height="14" rx="3" class="s1"/>
+    <text x="44" y="25" fill="#334155" font-size="12.5">Semester 1 — inherited from SLIPS (upstream)</text>
+    <rect x="14" y="38" width="22" height="14" rx="3" class="s2h"/>
+    <text x="44" y="49" fill="#334155" font-size="12.5">Semester 2 — our contribution (OT layer + hardening)</text>
+  </g>
+
+  <!-- ============ LAYER 1: INPUT ============ -->
+  <rect class="layerband" x="20" y="100" width="1440" height="118" rx="10"/>
+  <text class="layerlbl" x="40" y="126" transform="rotate(0)">1 · TRAFFIC INPUT</text>
+
+  <g>
+    <rect class="s1" x="190" y="132" width="180" height="66" rx="8"/>
+    <text class="boxt" x="280" y="160" text-anchor="middle">PCAP files</text>
+    <text class="boxs" x="280" y="180" text-anchor="middle">offline capture replay</text>
+  </g>
+  <g>
+    <rect class="s1" x="390" y="132" width="200" height="66" rx="8"/>
+    <text class="boxt" x="490" y="160" text-anchor="middle">Flow / log inputs</text>
+    <text class="boxs" x="490" y="180" text-anchor="middle">Zeek dir · Argus · Suricata · nfdump</text>
+  </g>
+  <g>
+    <rect class="s2h" x="640" y="128" width="300" height="74" rx="8"/>
+    <text class="s2t" x="790" y="154" text-anchor="middle">Live SPAN / TAP capture  (eth1)</text>
+    <text class="s2s" x="790" y="174" text-anchor="middle">passive mirror at IT/OT boundary — no IP,</text>
+    <text class="s2s" x="790" y="190" text-anchor="middle">OT devices never see the sensor</text>
+  </g>
+
+  <!-- ============ LAYER 2: ZEEK ============ -->
+  <rect class="layerband" x="20" y="246" width="1440" height="150" rx="10"/>
+  <text class="layerlbl" x="40" y="272">2 · CAPTURE &amp; PARSING</text>
+
+  <g>
+    <rect class="s1h" x="190" y="284" width="250" height="92" rx="8"/>
+    <text class="boxt" x="315" y="312" text-anchor="middle">Zeek engine</text>
+    <text class="boxs" x="315" y="334" text-anchor="middle">packets → conn.log, dns.log,</text>
+    <text class="boxs" x="315" y="350" text-anchor="middle">ssl.log, http.log, notice.log …</text>
+  </g>
+  <g>
+    <rect class="s1" x="460" y="284" width="230" height="92" rx="8"/>
+    <text class="boxt" x="575" y="308" text-anchor="middle">SLIPS Zeek scripts</text>
+    <text class="boxs" x="575" y="330" text-anchor="middle">JA3/JA3S · ARP · ICMP scans</text>
+    <text class="boxs" x="575" y="346" text-anchor="middle">DoH detection · GeoIP (MMDB)</text>
+  </g>
+  <g>
+    <rect class="s2h" x="710" y="280" width="300" height="100" rx="8"/>
+    <text class="s2t" x="860" y="306" text-anchor="middle">ot_protocols.zeek</text>
+    <text class="s2s" x="860" y="328" text-anchor="middle">Modbus · DNP3 · S7Comm</text>
+    <text class="s2s" x="860" y="344" text-anchor="middle">PROFINET-DCP · CIP · PTP/NTP</text>
+    <text class="s2s" x="860" y="362" text-anchor="middle">emits OT events + Notice types</text>
+  </g>
+
+  <!-- ============ LAYER 3: CORE / IPC ============ -->
+  <rect class="layerband" x="20" y="424" width="1440" height="156" rx="10"/>
+  <text class="layerlbl" x="40" y="450">3 · CORE &amp; MESSAGE BUS</text>
+
+  <g>
+    <rect class="s1h" x="190" y="462" width="210" height="100" rx="8"/>
+    <text class="boxt" x="295" y="492" text-anchor="middle">Profiler</text>
+    <text class="boxs" x="295" y="514" text-anchor="middle">builds profiles &amp; time-windows</text>
+    <text class="boxs" x="295" y="530" text-anchor="middle">publishes per-protocol flows</text>
+  </g>
+
+  <g>
+    <rect class="s1h" x="430" y="462" width="300" height="100" rx="8"/>
+    <text class="boxt" x="580" y="488" text-anchor="middle">Redis pub/sub  (IPC bus)</text>
+    <text class="boxs" x="580" y="510" text-anchor="middle">channels: new_flow, new_notice, new_arp …</text>
+    <rect class="s2" x="446" y="520" width="268" height="30" rx="5"/>
+    <text class="s2s" x="580" y="540" text-anchor="middle" font-weight="700">+ new_modbus · new_s7comm · new_dnp3</text>
+  </g>
+
+  <g>
+    <rect class="store" x="760" y="462" width="250" height="100" rx="8"/>
+    <text class="boxt" x="885" y="488" text-anchor="middle">State storage</text>
+    <text class="boxs" x="885" y="510" text-anchor="middle">Redis (live) · SQLite (history)</text>
+    <rect class="s2" x="776" y="520" width="218" height="30" rx="5"/>
+    <text class="s2s" x="885" y="540" text-anchor="middle" font-weight="700">+ AOF/RDB persistence</text>
+  </g>
+
+  <!-- ============ LAYER 4: DETECTION ============ -->
+  <rect class="layerband" x="20" y="608" width="1440" height="232" rx="10"/>
+  <text class="layerlbl" x="40" y="634">4 · DETECTION MODULES</text>
+
+  <!-- upstream modules grid -->
+  <g>
+    <rect class="s1" x="190" y="648" width="166" height="48" rx="7"/>
+    <text class="boxt" x="273" y="677" text-anchor="middle" font-size="13">Threat Intelligence</text>
+    <rect class="s1" x="366" y="648" width="150" height="48" rx="7"/>
+    <text class="boxt" x="441" y="677" text-anchor="middle" font-size="13">PortScan</text>
+    <rect class="s1" x="526" y="648" width="166" height="48" rx="7"/>
+    <text class="boxt" x="609" y="677" text-anchor="middle" font-size="13">RNN C&amp;C detection</text>
+    <rect class="s1" x="190" y="706" width="166" height="48" rx="7"/>
+    <text class="boxt" x="273" y="735" text-anchor="middle" font-size="13">Flow Alerts</text>
+    <rect class="s1" x="366" y="706" width="150" height="48" rx="7"/>
+    <text class="boxt" x="441" y="735" text-anchor="middle" font-size="13">HTTP Analyzer</text>
+    <rect class="s1" x="526" y="706" width="166" height="48" rx="7"/>
+    <text class="boxt" x="609" y="735" text-anchor="middle" font-size="13">ARP · Leak · IP Info</text>
+    <text class="boxs" x="190" y="784" font-size="11.5" fill="#64748b">+ Network Discovery, Update Manager, VirusTotal (all from upstream SLIPS)</text>
+  </g>
+
+  <!-- OT detection big box -->
+  <g>
+    <rect class="s2h" x="730" y="648" width="290" height="170" rx="10"/>
+    <text class="s2t" x="875" y="676" text-anchor="middle" font-size="16">OT Detection module</text>
+    <text class="s2s" x="875" y="698" text-anchor="middle">20 OT/ICS attack types · 6 protocols</text>
+    <text class="s2s" x="875" y="720" text-anchor="middle">Modbus flood / illegal func / write-coil</text>
+    <text class="s2s" x="875" y="736" text-anchor="middle">S7 STOP · DNP3 · PLC mode-switch</text>
+    <text class="s2s" x="875" y="752" text-anchor="middle">valve/motor cycling · PTP/NTP spoof</text>
+    <text class="s2s" x="875" y="774" text-anchor="middle">sliding-window counters · dedup</text>
+    <text class="s2s" x="875" y="796" text-anchor="middle">authorized-master &amp; protected-device checks</text>
+  </g>
+
+  <!-- ============ LAYER 5: EVIDENCE / ALERT ============ -->
+  <rect class="layerband" x="20" y="868" width="1440" height="104" rx="10"/>
+  <text class="layerlbl" x="40" y="894">5 · EVIDENCE &amp; ALERT PIPELINE</text>
+
+  <g>
+    <rect class="s1h" x="300" y="892" width="880" height="62" rx="8"/>
+    <text class="boxt" x="740" y="918" text-anchor="middle">Evidence handler  →  threshold evaluation  →  alert handler  →  alerts.json</text>
+    <text class="boxs" x="740" y="938" text-anchor="middle">accumulates weighted evidence per profile/time-window; OT evidence carries 0.85–0.95 confidence; threshold lowered to 0.15 for OT (S2)</text>
+  </g>
+
+  <!-- ============ LAYER 6: RESPONSE / OUTPUT ============ -->
+  <rect class="layerband" x="20" y="1000" width="1440" height="190" rx="10"/>
+  <text class="layerlbl" x="40" y="1026">6 · RESPONSE &amp; OUTPUT</text>
+
+  <g>
+    <rect class="s2h" x="150" y="1038" width="280" height="128" rx="9"/>
+    <text class="s2t" x="290" y="1066" text-anchor="middle">Blocking module</text>
+    <text class="s2s" x="290" y="1088" text-anchor="middle">iptables auto-block of attackers</text>
+    <rect class="s2" x="166" y="1100" width="248" height="50" rx="6"/>
+    <text class="s2s" x="290" y="1120" text-anchor="middle" font-weight="700">OT-SAFE: PLC / HMI / SCADA</text>
+    <text class="s2s" x="290" y="1138" text-anchor="middle">IPs are never blocked</text>
+  </g>
+
+  <g>
+    <rect class="s1" x="450" y="1038" width="300" height="128" rx="9"/>
+    <text class="boxt" x="600" y="1066" text-anchor="middle">Alert export</text>
+    <text class="boxs" x="600" y="1088" text-anchor="middle">Slack · STIX/TAXII  (upstream)</text>
+    <rect class="s2" x="466" y="1100" width="268" height="50" rx="6"/>
+    <text class="s2s" x="600" y="1120" text-anchor="middle" font-weight="700">+ Syslog (RFC-5424) · HTTP webhook</text>
+    <text class="s2s" x="600" y="1138" text-anchor="middle">→ SIEM (Splunk / Elastic / Graylog)</text>
+  </g>
+
+  <g>
+    <rect class="s1" x="770" y="1038" width="260" height="128" rx="9"/>
+    <text class="boxt" x="900" y="1066" text-anchor="middle">Web interface</text>
+    <text class="boxs" x="900" y="1088" text-anchor="middle">Flask dashboard · profiles, alerts,</text>
+    <text class="boxs" x="900" y="1104" text-anchor="middle">evidence, timeline  (port 55000)</text>
+    <rect class="s2" x="786" y="1116" width="228" height="38" rx="6"/>
+    <text class="s2s" x="900" y="1140" text-anchor="middle" font-weight="700">+ login &amp; session auth</text>
+  </g>
+
+  <g>
+    <rect class="s1" x="1050" y="1038" width="200" height="128" rx="9"/>
+    <text class="boxt" x="1150" y="1066" text-anchor="middle">Kalipso TUI</text>
+    <text class="boxs" x="1150" y="1090" text-anchor="middle">terminal dashboard</text>
+    <text class="boxs" x="1150" y="1106" text-anchor="middle">(Node.js / blessed)</text>
+    <text class="boxs" x="1150" y="1130" text-anchor="middle">upstream SLIPS</text>
+  </g>
+
+  <!-- ===================== FLOW ARROWS ===================== -->
+  <!-- L1 -> L2 -->
+  <path class="flow" d="M280,198 L280,240 L315,240 L315,284" marker-end="url(#arrow)"/>
+  <path class="flow" d="M490,198 L490,240 L575,240 L575,284" marker-end="url(#arrow)"/>
+  <path class="flowS2" d="M790,202 L790,280" marker-end="url(#arrowS2)"/>
+
+  <!-- L2 -> L3 (zeek -> profiler) -->
+  <path class="flow" d="M315,376 L315,418 L295,418 L295,462" marker-end="url(#arrow)"/>
+  <path class="flow" d="M575,376 L575,418 L420,418 L420,462 L400,462" marker-end="url(#arrow)" stroke-dasharray="0"/>
+  <path class="flowS2" d="M860,380 L860,418 L580,418 L580,462" marker-end="url(#arrowS2)"/>
+  <text class="elbl" x="610" y="412">OT logs → profiler</text>
+
+  <!-- profiler -> redis -->
+  <path class="flow" d="M400,512 L430,512" marker-end="url(#arrow)"/>
+  <!-- redis <-> storage -->
+  <path class="flow" d="M730,500 L760,500" marker-end="url(#arrow)"/>
+  <path class="flow" d="M760,524 L730,524" marker-end="url(#arrow)"/>
+
+  <!-- L3 redis -> L4 detection -->
+  <path class="flow" d="M520,562 L520,600 L440,600 L440,648" marker-end="url(#arrow)"/>
+  <text class="elbl" x="455" y="596">subscribe</text>
+  <!-- redis OT channels -> OT module -->
+  <path class="flowS2" d="M640,535 L690,535 L690,620 L875,620 L875,648" marker-end="url(#arrowS2)"/>
+  <text class="elbl" x="700" y="614" fill="#b45309">new_modbus / s7comm / dnp3</text>
+
+  <!-- L4 -> L5 -->
+  <path class="flow" d="M441,754 L441,830 L560,830 L560,892" marker-end="url(#arrow)"/>
+  <path class="flowS2" d="M875,818 L875,860 L900,860 L900,892" marker-end="url(#arrowS2)"/>
+
+  <!-- L5 -> L6 fanout -->
+  <path class="flow" d="M740,954 L740,986 L290,986 L290,1038" marker-end="url(#arrow)"/>
+  <path class="flow" d="M740,954 L740,986 L600,986 L600,1038" marker-end="url(#arrow)"/>
+  <path class="flow" d="M820,954 L820,1000 L900,1000 L900,1038" marker-end="url(#arrow)"/>
+  <path class="flow" d="M1000,954 L1000,1000 L1150,1000 L1150,1038" marker-end="url(#arrow)"/>
+
+  <!-- footnote -->
+  <text x="40" y="1208" fill="#94a3b8" font-size="11.5">Team: Mostafa Hamada · Zeyad Magdy · Ahmed Ashraf · Karim Walid   —   Supervisor: Dr. Islam El-Maddah   ·   Derivative of SLIPS © Stratosphere Lab, CTU Prague (GPL-2.0)</text>
+</svg>

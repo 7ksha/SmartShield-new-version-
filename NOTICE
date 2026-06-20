@@ -1,0 +1,47 @@
+SmartShield — Behavioral Machine Learning-Based Intrusion Prevention System
+===========================================================================
+
+This product is a derivative work (a graduation project) based on:
+
+    Stratosphere Linux IPS (SLIPS)
+    https://github.com/stratosphereips/StratosphereLinuxIPS
+    Copyright (C) Stratosphere Laboratory, AIC, FEL,
+    Czech Technical University in Prague.
+
+Original authors include Sebastian Garcia, Alya Gomaa, Kamila Babayeva,
+and other contributors to the SLIPS project.
+
+SLIPS is free software, licensed under the GNU General Public License,
+version 2.0 (GPL-2.0-only). SmartShield is distributed under the same
+license. A copy of the license is provided in LICENSES/GPL-2.0-only.txt.
+
+In accordance with the GPL, the original copyright notices, license, and
+author attribution (see CITATION.cff) have been preserved. The user-facing
+product name has been changed to "SmartShield"; this does not remove or
+supersede the rights or attribution of the original authors.
+
+-----------------------------------------------------------------------
+Modifications made by this project ("our contributions")
+-----------------------------------------------------------------------
+
+Graduation project team:
+    - Mostafa Hamada Hassan Ahmed
+    - Zeyad Magdy Roushdy
+    - Ahmed Ashraf Ahmed
+    - Karim Walid Moussa Shehata
+Supervisor:
+    - Dr. Islam El-Maddah
+
+Summary of changes relative to upstream SLIPS:
+    - Added an OT/ICS (Operational Technology) detection module:
+      modules/ot_detection/
+    - Added OT-protocol Zeek scripts: zeek-scripts/ot_protocols.zeek
+      (Modbus, DNP3, S7Comm / industrial protocol analysis).
+    - Added OT configuration: config/ot_protected_devices.conf,
+      config/modbus_authorized_masters.conf, and the `ot_detection`
+      section of config/smartshield.yaml.
+    - Tuned detection thresholds and analysis direction for industrial /
+      factory deployments.
+    - Rebranded the user-facing product name from SLIPS to SmartShield.
+
+See the README section "Our contributions vs. upstream" for detail.
